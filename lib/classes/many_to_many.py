@@ -6,7 +6,15 @@ class Article:
         self.author = author
         self.magazine = magazine
         self.title = title
-        self.append(author, magazine, title)
+        Article.append(self)
+    
+    def __getitem__(self, index):
+        if index == 0:
+            return self.author
+        elif index == 1:
+            return self.magazine
+        elif index == 2:
+            return self.title
 
     def __repr__(self):
         return f"{self.author, self.magazine, self.title}"
@@ -27,25 +35,37 @@ class Article:
         self._title = value
         return self._title
     
+    @property
+    def author(self):
+        return self._author
+    
+    @author.setter
+    def author(self, value):
+
+        self._author = value
+        return self._author
+    
+    # def get_author(self):
+    #     return self.author
+
+    @property
+    def magazine(self):
+        return self._magazine
+    
+    @magazine.setter
+    def magazine(self, value):
+
+        self._magazine = value
+        return self._magazine
+    
+    # def magazine(self):
+    #     for each in Magazine.all:
+    #         if self.magazine == each:
+    #             return each
+    
     @classmethod
-    def append(cls, author, magazine, title):
-        if (author, magazine, title) in cls.all:
-            pass
-        else:
-            cls.all.append((author, magazine, title))
-    
-    def get_author(self):
-        if self.author in Author.all:
-            return self.author
-        else:
-            raise ValueError("Author must be an instance of the Author class")
-    
-    def get_magazine(self):
-        for each in Magazine.all:
-            if self.magazine in each:
-                return each
-            else:
-                raise ValueError("Magazine must be an instance of the Magazine class")
+    def append(cls, article):
+        cls.all.append(article)
         
 class Author:
 
@@ -53,7 +73,7 @@ class Author:
 
     def __init__(self, name):
         self.name = name
-        self.append(name)
+        Author.append(self)
 
     def __repr__(self):
         return f"'{self.name}'"
@@ -75,33 +95,33 @@ class Author:
         return self._name
     
     @classmethod
-    def append(cls, name):
-        if name in cls.all:
-            pass
-        else:
-            cls.all.append(name)
+    def append(cls, author):
+        cls.all.append(author)
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.name == other
 
     def articles(self):
         article_list = []
+
         for article in Article.all:
-            if self.name in article:
-                article_list.append((article))
+            if self.name == article[0]:
+                article_list.append(article)
         return article_list
 
     def magazines(self):
         article_list = []
 
         for article in Article.all:
-            if self.name in article:
+            if self.name == article[0]:
                 article_list.append(article)
-
+        
         magazine_list = []
 
         for article in article_list:
-            for magazine in Magazine.all:
-                if article[1] in magazine:
-                    magazine_list.append(magazine)
-
+            magazine_list.append(article[1])
+       
         unique_magazine_list = []
 
         for magazine in magazine_list:
@@ -113,13 +133,14 @@ class Author:
         return unique_magazine_list
 
     def add_article(self, magazine, title):
-        return(Article(self.name, magazine, title))
+        new_article = Article(self.name, magazine, title)
+        return new_article
 
     def topic_areas(self):
         magazine_list = []
 
         for article in Article.all:
-            if self.name in article:
+            if self.name == article[0]:
                 magazine_list.append(article[1])
         
         unique_magazines = []
@@ -145,14 +166,16 @@ class Magazine:
     def __init__(self, name, category):
         self.name = name
         self.category = category
-        self.append(name, category)
-
+        Magazine.append(self)
+    
+    def __getitem__(self, index):
+        if index == 0:
+            return self.name
+        elif index == 1:
+            return self.category
+    
     def __repr__(self):
         return f"{self.name, self.category}"
-    
-    def __getitem__(self, item):
-        item = self.category
-        return item
 
     @property
     def name(self):
@@ -183,17 +206,14 @@ class Magazine:
         return self._category
     
     @classmethod
-    def append(cls, name, category):
-        if (name, category) in cls.all:
-            pass
-        else:
-            cls.all.append((name, category))
+    def append(cls, magazine):
+        cls.all.append(magazine)
     
     def articles(self):
         article_list = []
 
         for article in Article.all:
-            if self.name in article:
+            if self.name == article[1][0]:
                 article_list.append(article)
         
         return article_list
@@ -202,14 +222,14 @@ class Magazine:
         article_list = []
 
         for article in Article.all:
-            if self.name in article:
+            if self.name == article[1][0]:
                 article_list.append(article)
-        print(article_list)
+        
         author_list = []
 
         for article in article_list:
             author_list.append(article[0])
-        print(author_list)
+        
         unique_author_list = []
 
         for author in author_list:
@@ -219,20 +239,16 @@ class Magazine:
         return unique_author_list
 
     def article_titles(self):
-        article_list = []
+        article_title_list = []
 
         for article in Article.all:
-            if self.name in article:
-                article_list.append(article)
+            if self.name == article[1][0]:
+                article_title_list.append(article[2])
 
-        return article_list
-        
-        # article_titles_for_magazine = []
-
-        # for article in article_list:
-        #     article_titles_for_magazine.append(article[2])
-
-        # return article_titles_for_magazine
+        if article_title_list == []:
+            return None
+        else:    
+            return article_title_list
 
     def contributing_authors(self):
         pass
