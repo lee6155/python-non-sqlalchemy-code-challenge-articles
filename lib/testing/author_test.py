@@ -1,4 +1,5 @@
 import pytest
+import pdb
 
 from classes.many_to_many import Article
 from classes.many_to_many import Magazine
