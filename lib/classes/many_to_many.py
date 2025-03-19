@@ -7,14 +7,6 @@ class Article:
         self.magazine = magazine
         self.title = title
         Article.all.append(self)
-   
-    # def __getitem__(self, index):
-    #     if index == 0:
-    #         return self.author
-    #     elif index == 1:
-    #         return self.magazine
-    #     elif index == 2:
-    #         return self.title
 
     def __repr__(self):
         return f"{self.author, self.magazine, self.title}"
@@ -44,9 +36,6 @@ class Article:
 
         self._author = value
         return self._author
-    
-    # def get_author(self):
-    #     return self.author
 
     @property
     def magazine(self):
@@ -57,11 +46,6 @@ class Article:
 
         self._magazine = value
         return self._magazine
-    
-    # def magazine(self):
-    #     for each in Magazine.all:
-    #         if self.magazine == each:
-    #             return each
         
 class Author:
 
@@ -90,10 +74,6 @@ class Author:
         self._name = value
         return self._name
 
-    # def __eq__(self, other):
-    #     if isinstance(other, str):
-    #         return self.name == other
-
     def articles(self):
         return [article for article in Article.all if self == article.author]
 
@@ -113,30 +93,25 @@ class Author:
         return unique_magazines
 
     def add_article(self, magazine, title):
-        return Article(self.name, magazine, title)
+        return Article(self, magazine, title)
 
-#     def topic_areas(self):
-#         magazine_list = []
-
-#        magazines_by_author = [article.magazine for article in Article.all if self.name == article.author]
-# :
-#                 magazine_list.append(article[1])
+    def topic_areas(self):
+        magazines_by_author = [article.magazine for article in Article.all if self == article.author]
         
-#         unique_magazines = []
+        magazine_categories = [magazine.category for magazine in magazines_by_author]
 
-#         for each in magazine_list:
-#             if each not in unique_magazines:
-#                 unique_magazines.append(each)
+        unique_magazine_categories = []
 
-#         unique_categories = []
+        for category in magazine_categories:
+            if category not in unique_magazine_categories:
+                unique_magazine_categories.append(category)
+            else:
+                pass
 
-#         for each in unique_magazines:
-#             unique_categories.append(each[1])
-
-#         if unique_categories == []:
-#             return None
-#         else:
-#             return unique_categories
+        if unique_magazine_categories == []:
+            return None
+        else:
+            return unique_magazine_categories
 
 class Magazine:
 
@@ -146,12 +121,6 @@ class Magazine:
         self.name = name
         self.category = category
         Magazine.all.append(self)
-    
-    # def __getitem__(self, index):
-    #     if index == 0:
-    #         return self.name
-    #     elif index == 1:
-    #         return self.category
     
     def __repr__(self):
         return f"{self.name, self.category}"
@@ -185,56 +154,50 @@ class Magazine:
         return self._category
     
     def articles(self):
-        article_list = []
-
-        for article in Article.all:
-            if self.name == article[1][0]:
-                article_list.append(article)
-        
-        return article_list
+        return [article for article in Article.all if self == article.magazine]
 
     def contributors(self):
-        article_list = []
+        authors_for_magazine = [article.author for article in Article.all if self == article.magazine]
 
-        for article in Article.all:
-            if self.name == article[1][0]:
-                article_list.append(article)
-        
-        author_list = []
-
-        for article in article_list:
-            author_list.append(article[0])
-        
         unique_author_list = []
 
-        for author in author_list:
+        for author in authors_for_magazine:
             if author not in unique_author_list:
                 unique_author_list.append(author)
+            else:
+                pass
         
         return unique_author_list
 
     def article_titles(self):
-        article_title_list = []
+        article_titles = [article.title for article in Article.all if self == article.magazine]
 
-        for article in Article.all:
-            if self.name == article[1][0]:
-                article_title_list.append(article[2])
-
-        if article_title_list == []:
+        if article_titles == []:
             return None
         else:    
-            return article_title_list
+            return article_titles
 
     def contributing_authors(self):
-        pass
+        authors_for_magazine = [article.author for article in Article.all if self == article.magazine]
+        
+        unique_authors = []
 
-def create_instances():
-    author_1 = Author("Carry Bradshaw")
-    author_2 = Author("Nathaniel Hawthorne")
-    magazine = Magazine("Vogue", "Fashion")
-    article_1 = Article(author_1, magazine, "How to wear a tutu with style")
-    article_2 = Article(author_1, magazine, "Dating life in NYC")
-    article_3 = Article(author_2, magazine, "How to be single and happy")
+        for author in authors_for_magazine:
+            if author not in unique_authors:
+                unique_authors.append(author)
+        
+        unique_authors_article_count = {}
 
-    print(author_1.articles())
+        for author in unique_authors:
+            unique_authors_article_count[author] = authors_for_magazine.count(author)
 
+        authors_two_plus_articles = []
+
+        for author in unique_authors_article_count:
+            if unique_authors_article_count[author] > 2:
+                authors_two_plus_articles.append(author)
+
+        if authors_two_plus_articles == []:
+            return None
+        else:
+            return authors_two_plus_articles
